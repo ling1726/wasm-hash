@@ -11,6 +11,3 @@ crate-type = ["cdylib"]
 lto = true
 debug = false
 target = "wasm32-unknown-unknown"
-
-[dependencies]
-murmur2 = "0.1.0"
