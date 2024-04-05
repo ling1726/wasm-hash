@@ -1,4 +1,4 @@
-import {bin} from './bin';
+import { bin } from "./bin";
 
 function pack(str: string, len: number) {
   let i = 0;
@@ -11,9 +11,9 @@ function pack(str: string, len: number) {
 function unpack() {
   let str = "";
 
-  for (var i = 0, l = 10; i < l; i++) {
+  for (var i = 0, l = 11; i < l; i++) {
     if (output_buf[i] === 0) {
-      break;
+      continue;
     }
     str += String.fromCharCode(output_buf[i]);
   }
@@ -39,14 +39,12 @@ export function hash(input: string) {
   // store it, and log it to the console
 
   const result = unpack();
-  console.log(output_buf);
-  console.log(input_buf);
+  // console.log(output_buf);
+  // console.log(input_buf);
   return result;
 }
 
 let instance: WebAssembly.Instance | null = null;
-let input_ptr = 0;
-let output_ptr = 0;
 let input_buf = new Uint8Array(10);
 let output_buf = new Uint8Array(10);
 
@@ -55,22 +53,27 @@ export function hashSync(str: string) {
     const module = new WebAssembly.Module(bin);
     instance = new WebAssembly.Instance(module);
 
-    input_ptr = instance.exports.alloc_input();
-    output_ptr = instance.exports.alloc_output();
-    input_buf = new Uint8Array(instance.exports.memory.buffer, input_ptr, 3000);
-    output_buf = new Uint8Array(instance.exports.memory.buffer, output_ptr, 10);
+    input_buf = new Uint8Array(instance.exports.memory.buffer, 1, 3001);
+    output_buf = new Uint8Array(instance.exports.memory.buffer, 1, 11);
   }
 
-  return hash(str)
+  return hash(str);
 }
 
 export async function init() {
-  const bin = await fetch('target/wasm32-unknown-unknown/release/griffel_experiments.wasm').then(res => res.arrayBuffer());
-    const module = new WebAssembly.Module(bin);
-    instance = new WebAssembly.Instance(module);
+  const bin = await fetch(
+    "target/wasm32-unknown-unknown/release/griffel_experiments.wasm",
+  ).then((res) => res.arrayBuffer());
 
-  input_ptr = instance.exports.alloc_input();
-  output_ptr = instance.exports.alloc_output();
-  input_buf = new Uint8Array(instance.exports.memory.buffer, input_ptr, 3000);
-  output_buf = new Uint8Array(instance.exports.memory.buffer, output_ptr, 10);
+  const memory = new WebAssembly.Memory({ initial: 1 });
+  const module = new WebAssembly.Module(bin);
+
+  instance = new WebAssembly.Instance(module, {
+    env: {
+      memory,
+    },
+  });
+
+  input_buf = new Uint8Array(instance.exports.memory.buffer, 1, 3001);
+  output_buf = new Uint8Array(instance.exports.memory.buffer, 1, 11);
 }
