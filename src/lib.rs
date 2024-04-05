@@ -1,16 +1,5 @@
 mod murmur2_hash;
 
-extern "C" {
-    pub fn log(number: u32);
-}
-
-#[no_mangle]
-extern "C" fn main() {
-    unsafe {
-        log(42);
-    }
-}
-
 static mut output_ptr: *mut u8 = std::ptr::null_mut();
 static mut input_ptr: *mut u8 = std::ptr::null_mut();
 
@@ -59,29 +48,37 @@ pub unsafe extern "C" fn hash(len: usize) {
     std::mem::forget(data);
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn alloc(size: usize) -> *mut u8 {
-    let align = std::mem::align_of::<u8>();
-    let layout = std::alloc::Layout::from_size_align(size, align).unwrap();
-    let ptr = std::alloc::alloc(layout);
-    ptr
-}
+// #[no_mangle]
+// pub unsafe extern "C" fn alloc(size: usize) -> *mut u8 {
+//     let align = std::mem::align_of::<u8>();
+//     let layout = std::alloc::Layout::from_size_align(size, align).unwrap();
+//     let ptr = std::alloc::alloc(layout);
+//     ptr
+// }
+//
+// #[no_mangle]
+// pub unsafe extern "C" fn dealloc(ptr: *mut u8, size: usize) {
+//     let align = std::mem::align_of::<u8>();
+//     let layout = std::alloc::Layout::from_size_align(size, align).unwrap();
+//     std::alloc::dealloc(ptr, layout);
+// }
 
 #[no_mangle]
-pub unsafe extern "C" fn dealloc(ptr: *mut u8, size: usize) {
-    let align = std::mem::align_of::<u8>();
-    let layout = std::alloc::Layout::from_size_align(size, align).unwrap();
-    std::alloc::dealloc(ptr, layout);
-}
+pub unsafe extern "C" fn alloc_input() -> *const u8 {
+    let arr = [0u8; 3000]; // 3000 bytes
+    input_ptr = arr.as_ptr() as *mut u8;
 
-#[no_mangle]
-pub unsafe extern "C" fn alloc_input() -> *mut u8 {
-    input_ptr = alloc(3000);
+    std::mem::forget(arr);
     input_ptr
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn alloc_output() -> *mut u8 {
-    output_ptr = alloc(10);
-    output_ptr
+pub unsafe extern "C" fn alloc_output()-> *const u8 {
+
+        let arr = [0u8; 3000]; // 3000 bytes
+        output_ptr = arr.as_ptr() as *mut u8;
+
+        std::mem::forget(arr);
+        output_ptr
+
 }

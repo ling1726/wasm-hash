@@ -7,7 +7,7 @@ function toUint8Array(buf) {
   }
 
   fs.writeFileSync(
-    "bin.ts",
+    "griffel_experiments/src/bin.ts",
     `export const bin =  new Uint8Array(${JSON.stringify(arr)})`
   );
 }
