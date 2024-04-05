@@ -30,6 +30,7 @@ unsafe fn format_radix(mut x: u32, radix: u32) {
     }
 
     result.reverse();
+    std::mem::forget(result);
 }
 
 pub fn from_digit(num: u32) -> Option<u8> {
@@ -55,6 +56,7 @@ pub unsafe extern "C" fn hash(len: usize) {
     // read a Rust `String` from the byte array,
     let hash_res = murmur2_hash::hash(&data, u32::from_le_bytes);
     format_radix(hash_res, 36);
+    std::mem::forget(data);
 }
 
 #[no_mangle]

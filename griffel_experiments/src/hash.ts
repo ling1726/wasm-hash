@@ -1,3 +1,4 @@
+import {bin} from './bin';
 function pack(str: string, len: number) {
   let i = 0;
   while (i < len) {
@@ -23,7 +24,13 @@ function unpack() {
 // and log the result to the console.
 export function hash(input: string) {
   if (!instance) {
-    throw new Error();
+    const module = new WebAssembly.Module(bin);
+    instance = new WebAssembly.Instance(module);
+
+    input_ptr = instance.exports.alloc_input();
+    output_ptr = instance.exports.alloc_output();
+    input_buf = new Uint8Array(instance.exports.memory.buffer, input_ptr, 3000);
+    output_buf = new Uint8Array(instance.exports.memory.buffer, output_ptr, 10);
   }
 
   const len = input.length;
@@ -44,19 +51,6 @@ export function hash(input: string) {
   console.log(output_buf);
   console.log(input_buf);
   return result;
-}
-
-export async function init() {
-  const res = await window.fetch(
-    "target/wasm32-unknown-unknown/release/griffel_experiments.wasm"
-  );
-  const module = new WebAssembly.Module(await res.arrayBuffer());
-  instance = new WebAssembly.Instance(module);
-
-  input_ptr = instance.exports.alloc_input();
-  output_ptr = instance.exports.alloc_output();
-  input_buf = new Uint8Array(instance.exports.memory.buffer, input_ptr, 3000);
-  output_buf = new Uint8Array(instance.exports.memory.buffer, output_ptr, 10);
 }
 
 let instance: WebAssembly.Instance | null = null;
