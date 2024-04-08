@@ -1,7 +1,7 @@
 import referenceImpl from "@emotion/hash";
 import assert from "node:assert";
 import { test } from "node:test";
-import hash from "wasm-hash";
+import hash from "wasm-hash-griffel";
 
 test("hash (short string)", () => {
   const input = "hello world";

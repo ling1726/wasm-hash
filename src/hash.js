@@ -67,16 +67,17 @@ function hash(input) {
   }
 
   if (!instance) {
-    instance = bin({ env: { memory: new WebAssembly.Memory({ initial: 1 }) } });
+    const memory = new WebAssembly.Memory({ initial: 1, maximum: 1 }) ;
+    instance = bin({ env: { memory } });
     impl = instance.exports.hash;
 
     inputBuf = new Uint8Array(
-      instance.exports.memory.buffer,
+      memory.buffer,
       OFFSET,
       MAX_INPUT_LENGTH + OFFSET,
     );
     outputBuf = new Uint8Array(
-      instance.exports.memory.buffer,
+      memory.buffer,
       OFFSET,
       HASH_LENGTH,
     );
