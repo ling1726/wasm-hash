@@ -54,7 +54,7 @@ function unpack() {
  * @returns {string}
  */
 function hash(input) {
-  if (!process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production") {
     if (typeof input !== "string") {
       throw new TypeError("Expected a string");
     }
