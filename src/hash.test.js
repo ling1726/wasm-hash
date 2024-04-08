@@ -11,8 +11,23 @@ test("hash (short string)", () => {
 });
 
 test("hash (long string)", () => {
-  const input = "hello world".repeat(100);
+  const input = "a".repeat(3000);
 
   assert.equal(hash(input), referenceImpl(input));
-  assert.equal(hash(input), "1j833u4");
+  assert.equal(hash(input), "ri3z0c");
+});
+
+test("throws on strings longer than 3000 characters", () => {
+  const input = "a".repeat(3001);
+
+  assert.throws(
+    () => {
+      hash(input);
+    },
+    {
+      name: "Error",
+      message:
+        "Input is too long, only strings with length <= 3000 are supported",
+    },
+  );
 });

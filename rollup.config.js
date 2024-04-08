@@ -2,9 +2,7 @@ import { defineConfig } from "rollup";
 import path from "node:path";
 import wasm from "@rollup/plugin-wasm";
 
-const BIN_PATH = path.resolve(
-  "target/wasm32-unknown-unknown/release/wasm_hash.wasm",
-);
+const BIN_PATH = path.resolve("dist/wasm_hash.wasm");
 
 export default [
   defineConfig({

@@ -1,8 +1,11 @@
-import bin from "../target/wasm32-unknown-unknown/release/wasm_hash.wasm";
+import _bin from "../dist/wasm_hash.wasm";
+
+const bin =
+  /** @type {(imports: WebAssembly.Imports) => WebAssembly.Instance} */ (_bin);
 
 const OFFSET = 1;
 const HASH_LENGTH = 10 + OFFSET;
-const MAX_INPUT_LENGTH = 3000 + OFFSET;
+const MAX_INPUT_LENGTH = 3000;
 
 /** @type {WebAssembly.Instance} */
 let instance;
@@ -51,6 +54,18 @@ function unpack() {
  * @returns {string}
  */
 function hash(input) {
+  if (process.env.NODE_ENV !== "production") {
+    if (typeof input !== "string") {
+      throw new TypeError("Expected a string");
+    }
+
+    if (input.length > MAX_INPUT_LENGTH) {
+      throw new Error(
+        "Input is too long, only strings with length <= 3000 are supported",
+      );
+    }
+  }
+
   if (!instance) {
     instance = bin({ env: { memory: new WebAssembly.Memory({ initial: 1 }) } });
     impl = instance.exports.hash;
@@ -58,7 +73,7 @@ function hash(input) {
     inputBuf = new Uint8Array(
       instance.exports.memory.buffer,
       OFFSET,
-      MAX_INPUT_LENGTH,
+      MAX_INPUT_LENGTH + OFFSET,
     );
     outputBuf = new Uint8Array(
       instance.exports.memory.buffer,

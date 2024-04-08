@@ -6,24 +6,30 @@
   "type": "module",
   "files": [
     "dist/wasm-hash.js",
-    "dist/wasm-hash-node.cjs"
+    "dist/wasm-hash-node.cjs",
+    "dist/wasm-hash.d.ts"
   ],
   "devDependencies": {
     "@emotion/hash": "^0.9.1",
     "@rollup/plugin-wasm": "^6.2.2",
+    "binaryen": "^116.0.0",
     "prettier": "^3.2.5",
     "rollup": "^4.14.1",
     "vite": "^5.2.8"
   },
   "scripts": {
-    "prebuild": "cargo build --release --target wasm32-unknown-unknown",
+    "build:binary": "cargo build --release --target wasm32-unknown-unknown",
+    "postbuild:binary": "wasm-opt -Oz target/wasm32-unknown-unknown/release/wasm_hash.wasm -o dist/wasm_hash.wasm",
+    "prebuild": "npm run build:binary",
     "build": "rollup -c rollup.config.js",
+    "postbuild": "node -e \"require('fs').copyFileSync('src/hash.d.ts', 'dist/wasm-hash.d.ts')\"",
     "pretest": "npm run build",
     "test": "node --test src/hash.test.js",
     "start": "vite"
   },
   "exports": {
     "node": "./dist/wasm-hash-node.cjs",
-    "import": "./dist/wasm-hash.js"
+    "import": "./dist/wasm-hash.js",
+    "types": "./dist/wasm-hash.d.ts"
   }
 }
