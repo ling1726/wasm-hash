@@ -3,8 +3,7 @@ import _bin from "../out/wasm_hash.wasm";
 const bin =
   /** @type {(imports: WebAssembly.Imports) => WebAssembly.Instance} */ (_bin);
 
-const OFFSET = 1;
-const HASH_LENGTH = 10 + OFFSET;
+const HASH_LENGTH = 10;
 const MAX_INPUT_LENGTH = 3000;
 
 /** @type {WebAssembly.Instance} */
@@ -12,9 +11,7 @@ let instance;
 /** @type {(input: number) => void} */
 let impl;
 /** @type {Uint8Array} */
-let inputBuf = null;
-/** @type {Uint8Array} */
-let outputBuf;
+let buffer = null;
 
 /**
  * @param {string} str
@@ -26,7 +23,7 @@ function pack(str, len) {
   let i = 0;
 
   while (i < len) {
-    inputBuf[i] = str.charCodeAt(i);
+    buffer[i] = str.charCodeAt(i);
     i++;
   }
 }
@@ -38,11 +35,11 @@ function unpack() {
   let str = "";
 
   for (let i = 0, l = HASH_LENGTH; i < l; i++) {
-    if (outputBuf[i] === 0) {
+    if (buffer[i] === 0) {
       continue;
     }
 
-    str += String.fromCharCode(outputBuf[i]);
+    str += String.fromCharCode(buffer[i]);
   }
 
   return str;
@@ -67,18 +64,15 @@ function hash(input) {
   }
 
   if (!instance) {
-    instance = bin({ env: { memory: new WebAssembly.Memory({ initial: 1 }) } });
+    const memory = new WebAssembly.Memory({ initial:1, maximum: 1 });
+    instance = bin({ env: { memory } });
     impl = instance.exports.hash;
+    const ptr = instance.exports.pointer();
 
-    inputBuf = new Uint8Array(
-      instance.exports.memory.buffer,
-      OFFSET,
-      MAX_INPUT_LENGTH + OFFSET,
-    );
-    outputBuf = new Uint8Array(
-      instance.exports.memory.buffer,
-      OFFSET,
-      HASH_LENGTH,
+    buffer = new Uint8Array(
+      memory.buffer,
+      ptr,
+      MAX_INPUT_LENGTH,
     );
   }
 

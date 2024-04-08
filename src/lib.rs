@@ -4,8 +4,8 @@ static OFFSET: usize = 1;
 static RADIX: u32 = 36;
 
 unsafe fn format_radix(mut x: u32) {
-    let data: &mut [u8] = std::slice::from_raw_parts_mut::<u8>(OFFSET as *mut u8, 11);
-    let mut i: usize = 10;
+    let data: &mut [u8] = std::slice::from_raw_parts_mut::<u8>(OFFSET as *mut u8, 10);
+    let mut i: usize = 9;
 
     loop {
         let m = x % RADIX;
@@ -45,6 +45,11 @@ pub unsafe extern "C" fn hash(len: usize) {
 
     let hash_res = murmur2_hash::hash(&data, u32::from_le_bytes);
     format_radix(hash_res);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn pointer() -> usize {
+    OFFSET
 }
 
 #[cfg(test)]
