@@ -1,0 +1,29 @@
+{
+  "name": "wasm-hash",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "@emotion/hash implementation in WASM",
+  "type": "module",
+  "files": [
+    "dist/wasm-hash.js",
+    "dist/wasm-hash-node.cjs"
+  ],
+  "devDependencies": {
+    "@emotion/hash": "^0.9.1",
+    "@rollup/plugin-wasm": "^6.2.2",
+    "prettier": "^3.2.5",
+    "rollup": "^4.14.1",
+    "vite": "^5.2.8"
+  },
+  "scripts": {
+    "prebuild": "cargo build --release --target wasm32-unknown-unknown",
+    "build": "rollup -c rollup.config.js",
+    "pretest": "npm run build",
+    "test": "node --test src/hash.test.js",
+    "start": "vite"
+  },
+  "exports": {
+    "node": "./dist/wasm-hash-node.cjs",
+    "import": "./dist/wasm-hash.js"
+  }
+}

@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "griffel_experiments"
+name = "wasm-hash"
 version = "0.1.0"
