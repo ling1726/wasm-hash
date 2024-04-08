@@ -2,6 +2,7 @@
 
 const M_64: u64 = 0xc6a4a7935bd1e995;
 const M_32: u32 = M_64 as u32;
+
 // Integers in rust aren't generic. :/
 macro_rules! round {
     ($m:expr, $h:expr, $k:expr) => {
@@ -39,6 +40,7 @@ macro_rules! slack {
         }
     };
 }
+
 slack!(u32);
 slack!(u64);
 
@@ -50,4 +52,17 @@ pub fn hash(data: &[u8], load: impl Fn([u8; 4]) -> u32) -> u32 {
     let h = short_round!(M_32, h, chunks.remainder(), u32);
 
     h.slack(13).wrapping_mul(M_32).slack(15)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hash() {
+        let data = b"hello world";
+        let hash_res = hash(data, u32::from_le_bytes);
+
+        assert_eq!(hash_res, 404288627);
+    }
 }
