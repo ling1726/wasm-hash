@@ -1,11 +1,18 @@
 import referenceImpl from "@emotion/hash";
 import assert from "node:assert";
 import { test } from "node:test";
-import hash from "wasm-hash"
+import hash from "wasm-hash";
 
-test("hash", () => {
+test("hash (short string)", () => {
   const input = "hello world";
 
-  assert(hash(input), "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d");
-  assert(hash(input), referenceImpl(input));
+  assert.equal(hash(input), referenceImpl(input));
+  assert.equal(hash(input), "6opb3n");
+});
+
+test("hash (long string)", () => {
+  const input = "hello world".repeat(100);
+
+  assert.equal(hash(input), referenceImpl(input));
+  assert.equal(hash(input), "1j833u4");
 });
