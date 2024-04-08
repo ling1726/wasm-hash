@@ -5,9 +5,9 @@
   "description": "@emotion/hash implementation in WASM",
   "type": "module",
   "files": [
-    "dist/wasm-hash.js",
-    "dist/wasm-hash-node.cjs",
-    "dist/wasm-hash.d.ts"
+    "out/wasm-hash.js",
+    "out/wasm-hash-node.cjs",
+    "out/wasm-hash.d.ts"
   ],
   "devDependencies": {
     "@emotion/hash": "^0.9.1",
@@ -19,17 +19,18 @@
   },
   "scripts": {
     "build:binary": "cargo build --release --target wasm32-unknown-unknown",
-    "postbuild:binary": "wasm-opt -Oz target/wasm32-unknown-unknown/release/wasm_hash.wasm -o dist/wasm_hash.wasm",
+    "postbuild:binary": "wasm-opt -Oz target/wasm32-unknown-unknown/release/wasm_hash.wasm -o out/wasm_hash.wasm",
+    "prebuild:binary": "node -e \"require('fs').mkdirSync('out', { recursive: true })\"",
     "prebuild": "npm run build:binary",
     "build": "rollup -c rollup.config.js",
-    "postbuild": "node -e \"require('fs').copyFileSync('src/hash.d.ts', 'dist/wasm-hash.d.ts')\"",
+    "postbuild": "node -e \"require('fs').copyFileSync('src/hash.d.ts', 'out/wasm-hash.d.ts')\"",
     "pretest": "npm run build",
     "test": "node --test src/hash.test.js",
     "start": "vite"
   },
   "exports": {
-    "node": "./dist/wasm-hash-node.cjs",
-    "import": "./dist/wasm-hash.js",
-    "types": "./dist/wasm-hash.d.ts"
+    "node": "./out/wasm-hash-node.cjs",
+    "import": "./out/wasm-hash.js",
+    "types": "./out/wasm-hash.d.ts"
   }
 }

@@ -1,4 +1,4 @@
-import _bin from "../dist/wasm_hash.wasm";
+import _bin from "../out/wasm_hash.wasm";
 
 const bin =
   /** @type {(imports: WebAssembly.Imports) => WebAssembly.Instance} */ (_bin);

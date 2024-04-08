@@ -2,13 +2,13 @@ import { defineConfig } from "rollup";
 import path from "node:path";
 import wasm from "@rollup/plugin-wasm";
 
-const BIN_PATH = path.resolve("dist/wasm_hash.wasm");
+const BIN_PATH = path.resolve("out/wasm_hash.wasm");
 
 export default [
   defineConfig({
     input: "src/hash.js",
     output: {
-      file: "dist/wasm-hash.js",
+      file: "out/wasm-hash.js",
       format: "es",
     },
     plugins: [
@@ -21,7 +21,7 @@ export default [
   defineConfig({
     input: "src/hash.js",
     output: {
-      file: "dist/wasm-hash-node.cjs",
+      file: "out/wasm-hash-node.cjs",
       format: "cjs",
     },
     plugins: [
