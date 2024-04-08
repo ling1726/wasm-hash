@@ -1,7 +1,6 @@
 // Mixing consts
 
-const M_64: u64 = 0xc6a4a7935bd1e995;
-const M_32: u32 = M_64 as u32;
+const M_32: u32 = 0x5bd1_e995 as u32;
 
 // Integers in rust aren't generic. :/
 macro_rules! round {
@@ -27,28 +26,24 @@ macro_rules! short_round {
 }
 
 pub trait Slack {
-    fn slack(self, slack: Self) -> Self
+    fn slack(self, slack: u32) -> u32
     where
         Self: Sized;
 }
-macro_rules! slack {
-    ($typ:ty) => {
-        impl Slack for $typ {
-            fn slack(self, slack: Self) -> Self {
-                self ^ self >> slack
-            }
-        }
-    };
+
+impl Slack for u32 {
+    fn slack(self, slack: u32) -> u32 {
+        self ^ self >> slack
+    }
 }
 
-slack!(u32);
-slack!(u64);
-
-pub fn hash(data: &[u8], load: impl Fn([u8; 4]) -> u32) -> u32 {
+pub fn hash(data: &[u8]) -> u32 {
     let h: u32 = 0;
 
     let mut chunks = data.chunks_exact(4);
-    let h = (&mut chunks).fold(h, |h, k| round!(M_32, h, load(k.try_into().unwrap())));
+    let h = (&mut chunks).fold(h, |h, k| {
+        round!(M_32, h, u32::from_le_bytes(k.try_into().unwrap()))
+    });
     let h = short_round!(M_32, h, chunks.remainder(), u32);
 
     h.slack(13).wrapping_mul(M_32).slack(15)

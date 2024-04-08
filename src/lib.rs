@@ -42,8 +42,8 @@ pub fn from_digit(num: u32) -> Option<u8> {
 #[no_mangle]
 pub unsafe extern "C" fn hash(len: usize) {
     let data: &mut [u8] = std::slice::from_raw_parts_mut::<u8>(OFFSET as *mut u8, len);
+    let hash_res = murmur2_hash::hash(&data);
 
-    let hash_res = murmur2_hash::hash(&data, u32::from_le_bytes);
     format_radix(hash_res);
 }
 
