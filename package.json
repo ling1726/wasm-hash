@@ -11,12 +11,15 @@
   "devDependencies": {
     "@emotion/hash": "^0.9.1",
     "@rollup/plugin-wasm": "^6.2.2",
+    "binaryen": "^116.0.0",
     "prettier": "^3.2.5",
     "rollup": "^4.14.1",
     "vite": "^5.2.8"
   },
   "scripts": {
-    "prebuild": "cargo build --release --target wasm32-unknown-unknown",
+    "build:binary": "cargo build --release --target wasm32-unknown-unknown",
+    "postbuild:binary": "wasm-opt -Oz target/wasm32-unknown-unknown/release/wasm_hash.wasm -o dist/wasm_hash.wasm",
+    "prebuild": "npm run build:binary",
     "build": "rollup -c rollup.config.js",
     "pretest": "npm run build",
     "test": "node --test src/hash.test.js",

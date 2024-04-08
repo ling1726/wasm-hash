@@ -1,4 +1,7 @@
-import bin from "../target/wasm32-unknown-unknown/release/wasm_hash.wasm";
+import _bin from "../dist/wasm_hash.wasm";
+
+const bin =
+  /** @type {(imports: WebAssembly.Imports) => WebAssembly.Instance} */ (_bin);
 
 const OFFSET = 1;
 const HASH_LENGTH = 10 + OFFSET;
