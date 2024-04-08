@@ -1,5 +1,5 @@
 {
-  "name": "wasm-hash",
+  "name": "wasm-hash-griffel",
   "license": "MIT",
   "version": "1.0.0",
   "description": "@emotion/hash implementation in WASM",
